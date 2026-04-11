@@ -11,8 +11,7 @@
 
 void UTransitionWidget::NativeConstruct(){
 	Super::NativeConstruct();
-	CurrentLevelIndex = 0;
-	CurrentWaveLevelIndex = 0;
+
 }
 
 void UTransitionWidget::ShowTransitionWidget(){
@@ -21,7 +20,12 @@ void UTransitionWidget::ShowTransitionWidget(){
 	{
 		if (USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance))
 		{
-			if (SpartaGameInstance) { CurrentLevelIndex = SpartaGameInstance->CurrentLevelIndex; }
+			if (SpartaGameInstance)
+			{
+				CurrentLevelIndex = SpartaGameInstance->CurrentLevelIndex;
+				CurrentWaveLevelIndex = SpartaGameInstance->CurrentWaveLevelIndex;
+				UE_LOG(LogTemp, Warning, TEXT("[%p] Level %d, Wave %d GameInstance"), this, CurrentLevelIndex+1,CurrentWaveLevelIndex+1);
+			}
 		}
 	}
 
@@ -29,24 +33,26 @@ void UTransitionWidget::ShowTransitionWidget(){
 	{
 		if (ASprataPlayerController* PC = Cast<ASprataPlayerController>(PlayerController))
 		{
+			
 			PC->ClearAllWidget();
 			if (PC->TransitionWidgetClass)
 			{
-				this->AddToViewport(100);
-				if (this)
-				{
-					// TransitionWidgetInstance->SetVisibility(ESlateVisibility::Visible);
-
-					PC->bShowMouseCursor = true;
-					PC->SetInputMode(FInputModeUIOnly());
-				}
-				if (UTextBlock* LevelText = Cast
-					<UTextBlock>(this->GetWidgetFromName(TEXT("Level"))))
+				UUserWidget* TWI = PC->TransitionWidgetInstance;
+				TWI->AddToViewport(100);
+			
+				PC->bShowMouseCursor = true;
+				PC->SetInputMode(FInputModeUIOnly());
+				if (UTextBlock* LevelText = Cast<UTextBlock>(TWI->GetWidgetFromName(TEXT("TransitionLevel"))))
 				{
 					LevelText->SetText(FText::FromString(FString::Printf(TEXT("Level %d"), CurrentLevelIndex + 1)));
 				}
-				UFunction* PlayAnimFunc = this->FindFunction(FName("PlayTransitionAnim"));
-				if (PlayAnimFunc) { this->ProcessEvent(PlayAnimFunc, nullptr); }
+				if (UTextBlock* WaveText = Cast<UTextBlock>(TWI->GetWidgetFromName(TEXT("TransitionWave"))))
+				{
+					WaveText->SetText(FText::FromString(FString::Printf(TEXT("Wave %d"), CurrentWaveLevelIndex + 1)));
+				}
+				UE_LOG(LogTemp, Warning, TEXT("[%p] Level %d, Wave %d"), this, CurrentLevelIndex+1,CurrentWaveLevelIndex+1);
+				UFunction* PlayAnimFunc = TWI->FindFunction(FName("PlayTransitionAnim"));
+				if (PlayAnimFunc) { TWI->ProcessEvent(PlayAnimFunc, nullptr); }
 			}
 		}
 	}

@@ -4,6 +4,15 @@
 #include "CoreMinimal.h"
 #include "ItemSpawnRow.generated.h"
 
+UENUM(Blueprintable)
+enum class EItemRarity : uint8{
+	Common,
+	Rare,
+	Epic,
+	Legendary
+};
+
+
 USTRUCT(Blueprintable)
 struct FItemSpawnRow : public FTableRowBase{
 	GENERATED_BODY()

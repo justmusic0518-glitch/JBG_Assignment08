@@ -1,14 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+﻿// SpartaGameInstance.h
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "SpartaGameInstance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class JBG_ASSIGNMENT08_API USpartaGameInstance : public UGameInstance{
 	GENERATED_BODY()

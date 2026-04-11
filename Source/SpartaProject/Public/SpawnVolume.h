@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "SpawnVolume.generated.h"
 
+
 class UBoxComponent;
 
 UCLASS()
@@ -24,10 +25,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning")
 	UDataTable* WaveDataTable;
 	
-	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	AActor* SpawnRandomItem();
-	
-	FItemSpawnRow* GetRandomItem() const;
+	AActor* SpawnRandomItem(FWaveData* WaveData);
+	FItemSpawnRow* GetRandomItem(FWaveData* WaveData) const;
 	AActor* SpawnItem(TSubclassOf<AActor> ItemClass); // 액터의 하위클래스가 아니면 오류가나게
 	FVector GetRandomPointInVolume() const;
+	FWaveData* GetWaveData(int32 CurrentLevelIndex, int32 CurrentWaveLevelIndex);
 };

@@ -13,8 +13,8 @@ ASpawnVolume::ASpawnVolume(){
 	WaveDataTable = nullptr;
 }
 
-AActor* ASpawnVolume::SpawnRandomItem(){
-	if (FItemSpawnRow* SelectedRow = GetRandomItem())
+AActor* ASpawnVolume::SpawnRandomItem(FWaveData* WaveData){
+	if (FItemSpawnRow* SelectedRow = GetRandomItem(WaveData))
 	{
 		if (UClass* ActualClass = SelectedRow->ItemClass.Get())
 		{
@@ -24,37 +24,30 @@ AActor* ASpawnVolume::SpawnRandomItem(){
 	return nullptr;
 }
 
-FItemSpawnRow* ASpawnVolume::GetRandomItem() const{
-	if (!ItemDataTable) return nullptr;
+FItemSpawnRow* ASpawnVolume::GetRandomItem(FWaveData* WaveData) const{
+	if (!WaveData) return nullptr;
 	
-	TArray<FItemSpawnRow*> AllRows;
-	static const FString ContextString(TEXT("ItemSpawnContext"));
-	
-	ItemDataTable->GetAllRows(ContextString, AllRows);
+	const TArray<FItemSpawnRow>& AllRows = WaveData->WaveItems;
 	
 	if (AllRows.IsEmpty()) return nullptr;
 	
 	float TotalChance = 0.0f;
-	for (const FItemSpawnRow* Row : AllRows)
+	for (const FItemSpawnRow& Row : AllRows)
 	{
-		if (Row) 
-		{
-			TotalChance += Row->SpawnChance;
-		}
+		TotalChance += Row.SpawnChance;
 	}
 	
 	const float RandValue = FMath::FRandRange(0.0f, TotalChance);
 	float AccumulateChance = 0.0f;
 	
-	for (FItemSpawnRow* Row : AllRows)
+	for (FItemSpawnRow& Row : WaveData->WaveItems)
 	{
-		AccumulateChance += Row->SpawnChance;
+		AccumulateChance += Row.SpawnChance;
 		if (RandValue <= AccumulateChance)
 		{
-			return Row;
+			return &Row;
 		}
 	}
-	
 	return nullptr;
 }
 
@@ -79,4 +72,12 @@ AActor* ASpawnVolume::SpawnItem(TSubclassOf<AActor> ItemClass){
 		FRotator::ZeroRotator
 	);
 	return SpawnedActor;
+}
+
+FWaveData* ASpawnVolume::GetWaveData(int32 CurrentLevelIndex, int32 CurrentWaveLevelIndex){
+	if (!WaveDataTable) return nullptr;
+	FString String = FString::Printf(TEXT("Level%d_Wave%d"), CurrentLevelIndex+1, CurrentWaveLevelIndex+1);
+	FName Name = FName(*String);
+	FWaveData* WaveData = WaveDataTable->FindRow<FWaveData>(Name, TEXT("WaveDataContext"));
+	return WaveData;
 }

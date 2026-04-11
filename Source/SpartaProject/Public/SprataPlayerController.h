@@ -8,6 +8,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UTransitionWidget;
 
 
 UCLASS()
@@ -35,10 +36,10 @@ public:
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Menu")
 	UUserWidget* MainMenuWidgetInstance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TransitionWidget")
-	TSubclassOf<UUserWidget> TransitionWidgetClass;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TransitionWidget")
-	UUserWidget* TransitionWidgetInstance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Transition")
+	TSubclassOf<UTransitionWidget> TransitionWidgetClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Transition")
+	UTransitionWidget* TransitionWidgetInstance;
 
 
 

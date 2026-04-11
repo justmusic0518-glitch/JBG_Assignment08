@@ -12,8 +12,8 @@ class JBG_ASSIGNMENT08_API UTransitionWidget : public UUserWidget{
 public:
 	virtual void NativeConstruct() override;
 	
-	int32 CurrentWaveLevelIndex;
-	int32 CurrentLevelIndex;
+	int32 CurrentWaveLevelIndex = 0;
+	int32 CurrentLevelIndex = 0;
 	
 	UFUNCTION(BlueprintCallable, Category = "Transition")
 	void OnTransitionFinished();

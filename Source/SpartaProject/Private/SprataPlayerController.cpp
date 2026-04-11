@@ -120,10 +120,13 @@ void ASprataPlayerController::ShowGameHUD(){
 void ASprataPlayerController::ShowTransition(){
 	if (TransitionWidgetClass)
 	{
-		TransitionWidgetInstance = CreateWidget<UTransitionWidget>(this, TransitionWidgetClass);
+		if (!TransitionWidgetInstance)
+		{
+			TransitionWidgetInstance = CreateWidget<UTransitionWidget>(this, TransitionWidgetClass);
+		}
+
 		if (TransitionWidgetInstance) { 
-			UTransitionWidget* TransitionWidget = Cast<UTransitionWidget>(TransitionWidgetInstance);
-			if (TransitionWidget) TransitionWidget->ShowTransitionWidget();
+			TransitionWidgetInstance->ShowTransitionWidget();
 		}
 	}
 }
