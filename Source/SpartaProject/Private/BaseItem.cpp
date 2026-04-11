@@ -30,12 +30,6 @@ void ABaseItem::OnItemOverlap(
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult){
-	if (OtherActor && OtherActor->ActorHasTag("Player"))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
-			FString::Printf(TEXT("Overlap")));
-		ActivateItem(OtherActor);
-	}
 }
 void ABaseItem::OnItemEndOverlap(		
 		UPrimitiveComponent* OverlappedComp,
