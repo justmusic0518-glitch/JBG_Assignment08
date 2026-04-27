@@ -8,7 +8,11 @@
 #include "BaseItem.generated.h"
 
 
+
 class USphereComponent;
+class UParticleSystem;
+class USoundBase;
+class UAudioComponent;
 
 UCLASS()
 class JBG_ASSIGNMENT08_API ABaseItem : public AActor, public IItemInterface
@@ -28,7 +32,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
 	UStaticMeshComponent* StaticMesh;
 	
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Effects")
+	UParticleSystem* PickupParticle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Effects")
+	USoundBase* PickupSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Effects")
+	UAudioComponent* ActiveSoundComponent;
+	
 	virtual void OnItemOverlap(		
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,
@@ -43,6 +53,7 @@ protected:
 	  int32 OtherBodyIndex) override;
    	virtual void ActivateItem(AActor* Activator) override;
    	virtual FName GetItemType() const override;
+	void StopItemSound();
    	
    	virtual void DestroyItem();
 

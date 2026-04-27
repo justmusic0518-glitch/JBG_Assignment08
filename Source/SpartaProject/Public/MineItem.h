@@ -6,6 +6,9 @@
 #include "BaseItem.h"
 #include "MineItem.generated.h"
 
+class UParticleSystem;
+class USoundBase;
+
 UCLASS()
 class JBG_ASSIGNMENT08_API AMineItem : public ABaseItem{
 	GENERATED_BODY()
@@ -15,6 +18,11 @@ public:
 	AMineItem();
 	
 	USphereComponent* ExplosionCollision; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Effects")
+	UParticleSystem* ExplosionParticle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Effects")
+	USoundBase* ExplosionSound;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	float ExplosionDelay;

@@ -1,7 +1,9 @@
 // BaseItem.cpp
 #include "BaseItem.h"
 #include "Components/SphereComponent.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 
 ABaseItem::ABaseItem()
 {
@@ -21,6 +23,8 @@ ABaseItem::ABaseItem()
 	//이벤트 바인딩
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnItemOverlap);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnItemEndOverlap);
+	
+	ActiveSoundComponent = nullptr;
 }
 
 void ABaseItem::OnItemOverlap(		
@@ -30,15 +34,69 @@ void ABaseItem::OnItemOverlap(
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult){
+		if (OtherActor && OtherActor->ActorHasTag("Player"))
+		{
+			ActivateItem(OtherActor);
+		}
 }
 void ABaseItem::OnItemEndOverlap(		
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex){}
-void ABaseItem::ActivateItem(AActor* Activator){}
+
+void ABaseItem::ActivateItem(AActor* Activator){
+	UParticleSystemComponent* Particle = nullptr;
+
+	if (PickupParticle)
+	{
+		Particle = UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			PickupParticle,
+			GetActorLocation(),
+			GetActorRotation(),
+			true
+			);
+		
+	}
+	
+	if (PickupSound)
+	{
+			ActiveSoundComponent = UGameplayStatics::SpawnSoundAtLocation(
+			GetWorld(),
+			PickupSound,
+			GetActorLocation(),
+			GetActorRotation()
+			);
+	}
+	
+	if (Particle)
+	{
+		FTimerHandle DestroyParticleTimerHandle;
+		
+		GetWorld()->GetTimerManager().SetTimer(
+			DestroyParticleTimerHandle,
+			[Particle]()
+			{
+				Particle->DestroyComponent();
+			},
+			2.0f,
+			false
+			);
+	}
+	
+}
 FName ABaseItem::GetItemType() const{
 	return ItemType;
+}
+
+void ABaseItem::StopItemSound(){
+	if (ActiveSoundComponent)
+	{
+		ActiveSoundComponent->Stop();
+		ActiveSoundComponent->DestroyComponent();
+		ActiveSoundComponent = nullptr;
+	}
 }
 
 void ABaseItem::DestroyItem(){ 

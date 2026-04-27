@@ -206,7 +206,6 @@ void ASpartaGameState::UpdateHUD(){
 				float RemainingTime = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle); //타이머가 몇초 남았는지
 				if (UTextBlock* TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName((TEXT("Time")))))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Remaining Time: %f"), RemainingTime);
 					TimeText->SetText(FText::FromString(FString::Printf(TEXT("%.1f"), RemainingTime)));
 				}
 				if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName((TEXT("Score")))))

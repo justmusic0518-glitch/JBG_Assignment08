@@ -1,10 +1,9 @@
-﻿
+﻿// MineItem.cpp
 #include "MineItem.h"
-
 #include "SpartaGameState.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Particles/ParticleSystemComponent.h"
 
 AMineItem::AMineItem(){
 	ExplosionDelay = 2.0f;
@@ -18,7 +17,11 @@ AMineItem::AMineItem(){
 	ExplosionCollision->SetupAttachment(Scene);
 }
 
-void AMineItem::ActivateItem(AActor* Activator){
+void AMineItem::ActivateItem(AActor* Activator)
+{
+	Super::ActivateItem(Activator);
+	
+	if (!GetWorld()->GetTimerManager().IsTimerActive(ExplosionTimerHandle))
 	GetWorld()->GetTimerManager().SetTimer(
 		ExplosionTimerHandle,
 		this,
@@ -29,8 +32,27 @@ void AMineItem::ActivateItem(AActor* Activator){
 }
 
 void AMineItem::Explode(){
-		
-	TArray<AActor*> OverlappingActors; // 왜 만드는걸까
+	StopItemSound();
+	if (ExplosionParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			ExplosionParticle,
+			GetActorLocation(),
+			GetActorRotation(),
+			true
+		);
+	}
+	if (ExplosionSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			ExplosionSound,
+			GetActorLocation()
+			);
+	}
+	
+	TArray<AActor*> OverlappingActors; 
 	ExplosionCollision->GetOverlappingActors(OverlappingActors);
 	
 	for (AActor* Actor : OverlappingActors)
@@ -46,15 +68,40 @@ void AMineItem::Explode(){
 			);
 		}
 	}
+	ASpartaGameState* GameState = nullptr;
+
 	if (UWorld* World = GetWorld())
 	{
-		if (ASpartaGameState* GameState = World->GetGameState<ASpartaGameState>())
-		{
-			GameState->OnExplodedMine();
-		}
+		GameState = World->GetGameState<ASpartaGameState>();
 	}
-	
+
 	DestroyItem();
+
+	if (GameState)
+	{
+		GameState->OnExplodedMine();
+	}
+	/*
+	if (Particle)
+	{
+		TWeakObjectPtr<UParticleSystemComponent> WeakParticle = Particle;
+		
+		FTimerHandle DestroyParticleTimerHandle;
+		
+		GetWorld()->GetTimerManager().SetTimer(
+			DestroyParticleTimerHandle,
+			[WeakParticle]()
+			{
+				if (WeakParticle.IsValid())
+				{
+					WeakParticle->DestroyComponent();
+				}
+			},
+			2.0f,
+			false
+			);
+	}
+	*/
 }
 
 
