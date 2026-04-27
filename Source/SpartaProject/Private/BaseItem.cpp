@@ -25,6 +25,7 @@ ABaseItem::ABaseItem()
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnItemEndOverlap);
 	
 	ActiveSoundComponent = nullptr;
+	bPickupParticleAutoDestroy = true;
 }
 
 void ABaseItem::OnItemOverlap(		
@@ -55,7 +56,7 @@ void ABaseItem::ActivateItem(AActor* Activator){
 			PickupParticle,
 			GetActorLocation(),
 			GetActorRotation(),
-			true
+			bPickupParticleAutoDestroy
 			);
 		
 	}
@@ -70,15 +71,19 @@ void ABaseItem::ActivateItem(AActor* Activator){
 			);
 	}
 	
-	if (Particle)
+	if (Particle && !bPickupParticleAutoDestroy)
 	{
+		TWeakObjectPtr<UParticleSystemComponent> WeakParticle = Particle;
 		FTimerHandle DestroyParticleTimerHandle;
 		
 		GetWorld()->GetTimerManager().SetTimer(
 			DestroyParticleTimerHandle,
-			[Particle]()
+			[WeakParticle]()
 			{
-				Particle->DestroyComponent();
+				if (WeakParticle.IsValid())
+				{
+					WeakParticle->DestroyComponent();
+				}
 			},
 			2.0f,
 			false

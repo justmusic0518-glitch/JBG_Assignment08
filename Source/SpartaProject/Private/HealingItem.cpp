@@ -6,6 +6,8 @@
 AHealingItem::AHealingItem(){
 	HealAmount = 20.0f;
 	ItemType = "Healing";
+	
+	bPickupParticleAutoDestroy = false;
 }
 
 void AHealingItem::ActivateItem(AActor* Activator)

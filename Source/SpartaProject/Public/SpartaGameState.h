@@ -36,6 +36,8 @@ public:
 	int32 MaxLevels;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mine")
 	int32 ExplodeMineCount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level")
+	bool bIsEndingLevel;
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Level")

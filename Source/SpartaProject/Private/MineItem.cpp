@@ -21,6 +21,8 @@ void AMineItem::ActivateItem(AActor* Activator)
 {
 	Super::ActivateItem(Activator);
 	
+	bPickupParticleAutoDestroy = false;
+	
 	if (!GetWorld()->GetTimerManager().IsTimerActive(ExplosionTimerHandle))
 	GetWorld()->GetTimerManager().SetTimer(
 		ExplosionTimerHandle,

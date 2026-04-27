@@ -21,6 +21,7 @@ ASpartaGameState::ASpartaGameState(){
 	GoalScorePercent = 0.6f;
 	GoalScore = 0;
 	MaxLevels = 3;
+	bIsEndingLevel = false;
 }
 
 void ASpartaGameState::BeginPlay(){
@@ -146,6 +147,13 @@ void ASpartaGameState::OnExplodedMine(){
 }
 
 void ASpartaGameState::EndLevel(){
+	if (bIsEndingLevel)
+	{
+		return;
+	}
+	
+	bIsEndingLevel = true;
+	
 	GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 
 	if (UGameInstance* GameInstance = GetGameInstance())

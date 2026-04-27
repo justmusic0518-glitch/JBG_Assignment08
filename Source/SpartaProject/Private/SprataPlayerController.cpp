@@ -21,8 +21,7 @@ ASprataPlayerController::ASprataPlayerController() : InputMappingContext(nullptr
                                                      MainMenuWidgetClass(nullptr),
                                                      MainMenuWidgetInstance(nullptr),
                                                      TransitionWidgetClass(nullptr),
-                                                     TransitionWidgetInstance(nullptr)
-{}
+                                                     TransitionWidgetInstance(nullptr){}
 
 void ASprataPlayerController::BeginPlay(){
 	Super::BeginPlay();
@@ -99,25 +98,31 @@ void ASprataPlayerController::ShowMainMenu(bool bIsRestart){
 }
 
 void ASprataPlayerController::ShowGameHUD(){
-		ClearAllWidget();
-
-		if (HUDWidgetClass)
+	SetPause(false);
+	
+	ClearAllWidget();
+	
+	if (HUDWidgetClass)
+	{
+		HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+		if (HUDWidgetInstance)
 		{
-			HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
-			if (HUDWidgetInstance)
-			{
-				HUDWidgetInstance->AddToViewport();
+			HUDWidgetInstance->AddToViewport();
 
-				bShowMouseCursor = false; // 마우스커서가UI한테만  가도록
-				SetInputMode(FInputModeGameOnly());
-			}
-
-			ASpartaGameState* SpartaGameState = GetWorld() ? GetWorld()->GetGameState<ASpartaGameState>() : nullptr;
-			if (SpartaGameState) { SpartaGameState->UpdateHUD(); }
+			bShowMouseCursor = false; // 마우스커서가UI한테만  가도록
+			SetInputMode(FInputModeGameOnly());
 		}
+
+		ASpartaGameState* SpartaGameState = GetWorld() ? GetWorld()->GetGameState<ASpartaGameState>() : nullptr;
+		if (SpartaGameState) { SpartaGameState->UpdateHUD(); }
 	}
+}
 
 void ASprataPlayerController::ShowTransition(){
+	SetPause(true);
+	bShowMouseCursor = true;
+	SetInputMode(FInputModeUIOnly());
+
 	if (TransitionWidgetClass)
 	{
 		if (!TransitionWidgetInstance)
@@ -125,9 +130,7 @@ void ASprataPlayerController::ShowTransition(){
 			TransitionWidgetInstance = CreateWidget<UTransitionWidget>(this, TransitionWidgetClass);
 		}
 
-		if (TransitionWidgetInstance) { 
-			TransitionWidgetInstance->ShowTransitionWidget();
-		}
+		if (TransitionWidgetInstance) { TransitionWidgetInstance->ShowTransitionWidget(); }
 	}
 }
 
