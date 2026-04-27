@@ -19,9 +19,8 @@ AMineItem::AMineItem(){
 
 void AMineItem::ActivateItem(AActor* Activator)
 {
-	Super::ActivateItem(Activator);
-	
 	bPickupParticleAutoDestroy = false;
+	Super::ActivateItem(Activator);
 	
 	if (!GetWorld()->GetTimerManager().IsTimerActive(ExplosionTimerHandle))
 	GetWorld()->GetTimerManager().SetTimer(
@@ -34,7 +33,9 @@ void AMineItem::ActivateItem(AActor* Activator)
 }
 
 void AMineItem::Explode(){
+	bPickupParticleAutoDestroy = true;
 	StopItemSound();
+	
 	if (ExplosionParticle)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(
